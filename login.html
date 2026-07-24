@@ -4,203 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - UPTD Puskesmas Padasuka</title>
+    
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 untuk Pop-up -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <style>
-        /* CSS Variables untuk konsistensi warna */
-        :root {
-            --primary-color: #059669; /* Hijau Kesehatan */
-            --primary-hover: #047857;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #d1d5db;
-            --focus-ring: rgba(5, 150, 105, 0.2);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-main);
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
-
-        .login-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.02);
-            padding: 40px 30px;
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header-icon {
-            font-size: 40px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i.icon-left {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 16px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px 12px 40px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 15px;
-            color: var(--text-main);
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--focus-ring);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .toggle-password:hover {
-            color: var(--primary-color);
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .remember-me input {
-            accent-color: var(--primary-color);
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .forgot-password {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .forgot-password:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
-
-        .btn-login {
-            width: 100%;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-
-        .btn-login:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-login:active {
-            transform: scale(0.98);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Responsiveness */
-        @media (max-width: 480px) {
-            .login-card {
-                padding: 30px 20px;
-            }
-        }
-    </style>
+    <!-- PANGGIL FILE CSS DISINI -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -214,18 +27,16 @@
             </div>
 
             <!-- Login Form -->
-            <form action="#" method="POST">
+            <form id="loginForm">
                 
-                <!-- Username Input -->
                 <div class="form-group">
-                    <label for="username">Email</label>
+                    <label for="username">Email / NIP</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user icon-left"></i>
-                        <input type="text" id="username" class="form-control" placeholder="Masukkan Email" required autocomplete="username">
+                        <input type="text" id="username" class="form-control" placeholder="Contoh: 19800101 atau email" required autocomplete="username">
                     </div>
                 </div>
 
-                <!-- Password Input -->
                 <div class="form-group">
                     <label for="password">Kata Sandi</label>
                     <div class="input-wrapper">
@@ -235,43 +46,28 @@
                     </div>
                 </div>
 
-                <!-- Options -->
                 <div class="form-options">
                     <label class="remember-me">
-                        <input type="checkbox" name="remember"> Ingat Saya
+                        <input type="checkbox" id="rememberMe"> Ingat Saya
                     </label>
                     <a href="#" class="forgot-password">Lupa Sandi?</a>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn-login">
-                    Masuk <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 5px;"></i>
+                <button type="submit" class="btn-login" id="btnLogin">
+                    <span id="btnText">Masuk</span> <i class="fa-solid fa-arrow-right-to-bracket" id="btnIcon"></i>
                 </button>
 
             </form>
         </div>
         
-        <!-- Footer Info -->
         <div class="footer">
             &copy; 2026 UPTD Puskesmas Padasuka.<br>Dinas Kesehatan.
         </div>
     </div>
 
-    <!-- JavaScript untuk fitur tampilkan/sembunyikan kata sandi -->
-    <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#password');
-
-        togglePassword.addEventListener('click', function () {
-            // Ubah tipe input
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            
-            // Ubah ikon mata
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-    </script>
-
+    <!-- PANGGIL FILE JAVASCRIPT DISINI -->
+    <!-- type="module" wajib digunakan karena auth.js melakukan 'import' dari Firebase -->
+    <script type="module" src="auth.js"></script>
+    
 </body>
 </html>
