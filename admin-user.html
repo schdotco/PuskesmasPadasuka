@@ -32,11 +32,9 @@
             </h2>
 
             <form id="addUserForm">
-                <!-- Input hidden untuk menyimpan UID saat mode edit -->
                 <input type="hidden" id="editUid">
 
                 <div class="form-grid">
-                    
                     <div class="form-group">
                         <label>Nama Lengkap (Sesuai SK)</label>
                         <input type="text" id="nama" class="form-control" required placeholder="Budi Santoso">
@@ -70,10 +68,8 @@
                         <label>Kata Sandi Sementara <small id="passHelp" style="display:none; color:red;">(Kosongkan saat edit)</small></label>
                         <input type="text" id="password" class="form-control" required placeholder="Minimal 6 karakter" minlength="6">
                     </div>
-
                 </div>
 
-                <!-- Tombol Submit & Batal Edit -->
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button type="submit" id="btnSubmit" class="btn-submit">
                         Simpan Pengguna
@@ -102,7 +98,6 @@
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
-                        <!-- Data pengguna akan dimuat secara otomatis ke sini oleh JavaScript -->
                         <tr>
                             <td colspan="5" style="text-align: center;">Memuat data...</td>
                         </tr>
