@@ -177,6 +177,21 @@ label {
     background-color: #ca8a04;
 }
 
+/* Tambahan Tombol Hapus */
+.btn-delete-user {
+    background-color: #ef4444; /* Merah */
+}
+
+.btn-delete-user:hover {
+    background-color: #dc2626;
+}
+
+/* Mengatur jarak antar tombol aksi di dalam tabel */
+.user-table td div {
+    display: flex;
+    gap: 5px;
+}
+
 /* Responsiveness di HP */
 @media (max-width: 600px) {
     .form-grid { grid-template-columns: 1fr; }
