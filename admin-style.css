@@ -1,0 +1,133 @@
+:root {
+    --primary: #059669;
+    --primary-dark: #047857;
+    --danger: #ef4444;
+    --bg-light: #f9fafb;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+/* Navbar Admin */
+.admin-navbar {
+    background-color: var(--card-bg);
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-logout {
+    background-color: #fee2e2;
+    color: var(--danger);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.btn-logout:hover { background-color: #fca5a5; }
+
+/* Main Container */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Form Styles */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.btn-submit {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+.btn-submit:hover { background-color: var(--primary-dark); }
+.btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+@media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full-width { grid-column: span 1; }
+}
