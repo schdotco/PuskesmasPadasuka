@@ -1,3 +1,4 @@
+// Import Firebase Modular (V10)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -13,41 +14,44 @@ const firebaseConfig = {
     measurementId: "G-LWGLJ00M3C"
 };
 
+// =========================================================================
+// TRIK CANGGIH: INISIALISASI 2 APLIKASI FIREBASE DI 1 HALAMAN
+// =========================================================================
+
+// 1. App Utama (Untuk mempertahankan sesi Login Admin)
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// ----------------------------------------------------
-// 1. PROTEKSI HALAMAN (HANYA ADMIN YANG BOLEH BUKA)
-// ----------------------------------------------------
+// 2. App Kedua (MESIN KHUSUS PEMBUAT AKUN - Agar Admin tidak ter-logout)
+const secondaryApp = initializeApp(firebaseConfig, "MesinPembuatAkun");
+const secondaryAuth = getAuth(secondaryApp);
+
+// =========================================================================
+
+// PROTEKSI HALAMAN (HANYA ADMIN YANG BOLEH BUKA)
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Cek Role di Database
         const dbRef = ref(db);
         get(child(dbRef, `users/${user.uid}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const userData = snapshot.val();
                 if (userData.role !== 'admin') {
-                    // Jika bukan admin, tendang ke login
                     Swal.fire('Akses Ditolak', 'Anda bukan Administrator!', 'error').then(() => {
                         window.location.href = 'login.html';
                     });
                 }
             } else {
-                // User tidak ada di database
                 window.location.href = 'login.html';
             }
         });
     } else {
-        // Belum login sama sekali
         window.location.href = 'login.html';
     }
 });
 
 
-// ----------------------------------------------------
-// 2. LOGIKA TAMBAH PENGGUNA
-// ----------------------------------------------------
+// LOGIKA TAMBAH PENGGUNA TANPA LOGOUT
 document.getElementById('addUserForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -55,13 +59,11 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
     let nip = document.getElementById('nip').value.trim();
     const role = document.getElementById('role').value;
     const password = document.getElementById('password').value;
-
     const btnSubmit = document.getElementById('btnSubmit');
     
-    // Konversi NIP ke format Email
+    // Konversi NIP ke Email
     const email = nip + '@padasuka.go.id';
 
-    // Konfirmasi sebelum menyimpan
     Swal.fire({
         title: 'Konfirmasi',
         text: `Apakah Anda yakin ingin membuat akun untuk ${nama}?`,
@@ -74,16 +76,16 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = 'Menyimpan...';
 
-            // PROSES 1: Simpan Sesi Admin Saat Ini
-            // (Karena saat CreateUser, Firebase akan menimpa login saat ini dengan akun baru)
-            const currentAdminUser = auth.currentUser; 
-            
-            // PROSES 2: Buat Akun di Authentication
-            createUserWithEmailAndPassword(auth, email, password)
+            // KUNCI PERUBAHAN: Gunakan 'secondaryAuth' BUKAN 'auth' utama
+            createUserWithEmailAndPassword(secondaryAuth, email, password)
                 .then((userCredential) => {
                     const newUser = userCredential.user;
 
-                    // PROSES 3: Simpan Data Profil & Role di Realtime Database
+                    // Setelah akun dibuat, segera 'logout' dari secondary app 
+                    // agar mesin bersih untuk pembuatan akun berikutnya.
+                    signOut(secondaryAuth);
+
+                    // Simpan data Role ke Database menggunakan App Utama (yang login sebagai admin)
                     return set(ref(db, 'users/' + newUser.uid), {
                         nama: nama,
                         email: email,
@@ -93,25 +95,18 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
                     });
                 })
                 .then(() => {
-                    // Berhasil! 
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
-                        text: 'Akun berhasil dibuat. Pastikan mencatat sandi sementara tersebut.'
+                        text: 'Akun berhasil dibuat. Anda BISA langsung menambah akun lain.'
                     });
+                    
+                    // Reset Form
                     document.getElementById('addUserForm').reset();
                     btnSubmit.disabled = false;
                     btnSubmit.innerHTML = 'Simpan Pengguna';
                     
-                    // Catatan: Karena limitasi Client SDK Firebase, Admin saat ini
-                    // otomatis ter-logout dan digantikan sesi user baru. 
-                    // Oleh karena itu, kita paksa kembali ke halaman login agar admin login ulang.
-                    // (Untuk menghindarinya, di sistem besar biasanya menggunakan Firebase Admin SDK via Node.js Backend)
-                    setTimeout(() => {
-                        auth.signOut().then(() => {
-                            window.location.href = 'login.html';
-                        });
-                    }, 3000);
+                    // TIDAK ADA LAGI SCRIPT REDIRECT KE HALAMAN LOGIN! Admin tetap bisa di halaman ini.
                 })
                 .catch((error) => {
                     let msg = error.message;
@@ -125,9 +120,7 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
     });
 });
 
-// ----------------------------------------------------
-// 3. FUNGSI LOGOUT
-// ----------------------------------------------------
+// FUNGSI LOGOUT ADMIN
 document.getElementById('btnLogout').addEventListener('click', () => {
     signOut(auth).then(() => {
         window.location.href = 'login.html';
