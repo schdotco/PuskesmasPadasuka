@@ -83,16 +83,46 @@ loginForm.addEventListener('submit', (e) => {
                     showConfirmButton: false
                 }).then(() => {
                     
-                    // -------------------------------------------------
-                    // LOGIKA REDIRECT BERDASARKAN ROLE
-                    // -------------------------------------------------
-                    if (userRole === 'admin') {
-                        // Jika Admin, buka halaman Kelola User
-                        window.location.href = 'admin-user.html';
-                    } else {
-                        // Jika Pegawai Biasa (Bidan, Dokter, dll), buka Dashboard
-                        window.location.href = 'dashboard.html'; 
-                    }
+// -------------------------------------------------
+// LOGIKA REDIRECT BERDASARKAN ROLE
+// -------------------------------------------------
+switch(userRole) {
+    case 'admin':
+        // Arahkan ke halaman Admin
+        window.location.href = 'admin-user.html';
+        break;
+        
+    case 'user1':
+        // Arahkan ke Dashboard untuk User 1
+        window.location.href = 'dashboard-user1.html';
+        break;
+        
+    case 'user2':
+        // Arahkan ke Dashboard untuk User 2
+        window.location.href = 'dashboard-user2.html';
+        break;
+        
+    case 'user3':
+        // Arahkan ke Dashboard untuk User 3
+        window.location.href = 'dashboard-user3.html';
+        break;
+        
+    case 'user4':
+        // Arahkan ke Dashboard untuk User 4
+        window.location.href = 'dashboard-user4.html';
+        break;
+        
+    case 'user5':
+        // Arahkan ke Dashboard untuk User 5
+        window.location.href = 'dashboard-user5.html';
+        break;
+        
+    default:
+        // Jika role tidak dikenali atau kosong
+        Swal.fire('Error', 'Peran (Role) tidak dikenali oleh sistem.', 'error');
+        auth.signOut(); // Paksa logout
+        resetButton();
+}
                     
                 });
 
