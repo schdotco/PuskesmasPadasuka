@@ -55,14 +55,15 @@ onAuthStateChanged(auth, (user) => {
 document.getElementById('addUserForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
+    // 1. Ambil data langsung dari masing-masing kolom HTML
     const nama = document.getElementById('nama').value.trim();
-    let nip = document.getElementById('nip').value.trim();
+    const nip = document.getElementById('nip').value.trim();
     const role = document.getElementById('role').value;
+    const email = document.getElementById('email').value.trim(); // <-- Kunci perubahannya di sini
     const password = document.getElementById('password').value;
     const btnSubmit = document.getElementById('btnSubmit');
     
-    // Konversi NIP ke Email
-    const email = nip + '@padasuka.go.id';
+    // (Script const email = nip + '@padasuka.go.id' sudah dihapus dari sini)
 
     Swal.fire({
         title: 'Konfirmasi',
@@ -76,19 +77,18 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = 'Menyimpan...';
 
-            // KUNCI PERUBAHAN: Gunakan 'secondaryAuth' BUKAN 'auth' utama
+            // Eksekusi pembuatan akun ke Authentication Firebase dengan email asli
             createUserWithEmailAndPassword(secondaryAuth, email, password)
                 .then((userCredential) => {
                     const newUser = userCredential.user;
 
-                    // Setelah akun dibuat, segera 'logout' dari secondary app 
-                    // agar mesin bersih untuk pembuatan akun berikutnya.
+                    // Logout mesin pembuat akun agar bersih untuk user berikutnya
                     signOut(secondaryAuth);
 
-                    // Simpan data Role ke Database menggunakan App Utama (yang login sebagai admin)
+                    // Simpan biodata dan Role ke Realtime Database
                     return set(ref(db, 'users/' + newUser.uid), {
                         nama: nama,
-                        email: email,
+                        email: email, // Simpan email asli ke database
                         nip: nip,
                         role: role,
                         created_at: new Date().toISOString()
@@ -105,12 +105,12 @@ document.getElementById('addUserForm').addEventListener('submit', (e) => {
                     document.getElementById('addUserForm').reset();
                     btnSubmit.disabled = false;
                     btnSubmit.innerHTML = 'Simpan Pengguna';
-                    
-                    // TIDAK ADA LAGI SCRIPT REDIRECT KE HALAMAN LOGIN! Admin tetap bisa di halaman ini.
                 })
                 .catch((error) => {
                     let msg = error.message;
-                    if(error.code === 'auth/email-already-in-use') msg = 'NIP/Email tersebut sudah terdaftar!';
+                    // Pesan error disesuaikan
+                    if(error.code === 'auth/email-already-in-use') msg = 'Email tersebut sudah terdaftar!';
+                    else if(error.code === 'auth/invalid-email') msg = 'Format email tidak valid!';
                     
                     Swal.fire('Gagal', msg, 'error');
                     btnSubmit.disabled = false;
