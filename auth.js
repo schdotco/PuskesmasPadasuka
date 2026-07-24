@@ -1,4 +1,4 @@
-// Import Firebase dari CDN Google (Versi Modular)
+// Import Firebase dari CDN Google
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
