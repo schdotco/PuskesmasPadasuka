@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Segera Hadir - UPTD Puskesmas Padasuka</title>
+    <title>Dashboard Laporan - UPTD Puskesmas Padasuka</title>
     
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- LIBRARY JSPREADSHEET (EXCEL HTML) -->
+    <script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
+    <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+    <script src="https://jsuites.net/v4/jsuites.js"></script>
+    <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+    
+    <!-- SweetAlert2 untuk Notifikasi -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* CSS Variables diambil dari file sebelumnya untuk konsistensi */
         :root {
-            --primary: #059669; /* Hijau Kesehatan */
+            --primary: #059669; 
             --primary-dark: #047857;
             --danger: #ef4444;
             --bg-light: #f3f4f6;
@@ -32,14 +40,13 @@
 
         body {
             background-color: var(--bg-light);
-            background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             color: var(--text-main);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Navbar Style disamakan dengan Admin Panel */
+        /* Navbar Style */
         .admin-navbar {
             background-color: var(--card-bg);
             padding: 15px 30px;
@@ -73,93 +80,55 @@
             gap: 6px;
         }
 
-        .btn-logout:hover { 
-            background-color: #fca5a5; 
-        }
+        .btn-logout:hover { background-color: #fca5a5; }
 
-        /* Container untuk Pesan Tengah */
+        /* Container & Card */
         .container {
             flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .maintenance-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 50px 40px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.02);
-            text-align: center;
-            max-width: 500px;
+            padding: 30px;
+            max-width: 1200px; /* Diperlebar untuk tabel Excel */
+            margin: 0 auto;
             width: 100%;
         }
 
-        .maintenance-icon {
-            font-size: 70px;
-            color: var(--primary);
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            animation: pulse 2s infinite ease-in-out;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .maintenance-title {
-            font-size: 24px;
+        .card-title {
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 10px;
             color: var(--text-main);
         }
 
-        .maintenance-text {
-            font-size: 15px;
+        .sync-status {
+            font-size: 13px;
             color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .btn-back {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .btn-back:hover {
-            background-color: var(--primary-dark);
-        }
+        /* Penyesuaian agar font tabel tidak terlalu besar */
+        .jexcel { font-family: 'Inter', sans-serif !important; font-size: 14px; }
 
         .footer {
             text-align: center;
             padding: 20px;
             font-size: 13px;
             color: var(--text-muted);
-        }
-
-        /* Responsiveness di HP */
-        @media (max-width: 600px) {
-            .admin-navbar {
-                padding: 15px 20px;
-            }
-            .maintenance-card {
-                padding: 40px 20px;
-            }
-            .brand span {
-                display: none; /* Sembunyikan teks brand di layar kecil, sisakan ikon */
-            }
         }
     </style>
 </head>
@@ -169,38 +138,147 @@
     <nav class="admin-navbar">
         <div class="brand">
             <i class="fa-solid fa-house-medical"></i>
-            <span>UPTD Puskesmas Padasuka</span>
+            <span>UPTD Puskesmas Padasuka - Dashboard Klinik</span>
         </div>
-        <button id="btnLogout" class="btn-logout" onclick="window.location.href='login.html'">
+        <button id="btnLogout" class="btn-logout">
             <i class="fa-solid fa-right-from-bracket"></i> Keluar
         </button>
     </nav>
 
     <!-- Content -->
     <div class="container">
-        <div class="maintenance-card">
-            <!-- Ikon Sedang Perbaikan -->
-            <i class="fa-solid fa-person-digging maintenance-icon"></i>
+        <div class="card">
             
-            <h1 class="maintenance-title">Halaman Segera Hadir</h1>
-            
-            <p class="maintenance-text">
-                Mohon maaf, halaman dashboard ini masih dalam tahap pengembangan dan perbaikan (Under Maintenance). 
-                Kami sedang menyiapkan fitur terbaik untuk Anda. Silakan periksa kembali beberapa saat lagi.
-            </p>
-            
-            <a href="login.html" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Kembali ke Login
-            </a>
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title"><i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Laporan Bulanan Pasien</h2>
+                    <p style="font-size: 14px; color: var(--text-muted); margin-top: 5px;">Data akan tersimpan otomatis (Auto-Save) setiap kali Anda selesai mengetik.</p>
+                </div>
+                <div class="sync-status" id="syncStatus">
+                    <i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi
+                </div>
+            </div>
+
+            <!-- Wadah untuk Tabel Excel -->
+            <div style="overflow-x: auto;">
+                <div id="spreadsheet"></div>
+            </div>
+
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        &copy; 2026 UPTD Puskesmas Padasuka.<br>Dinas Kesehatan.
+        &copy; 2026 UPTD Puskesmas Padasuka. Dinas Kesehatan.
     </div>
 
+    <!-- Script Logika Firebase & Jspreadsheet -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVldfmqyfy2y4c695qyjPagVbir0LnoZw",
+            authDomain: "assetpdsk.firebaseapp.com",
+            databaseURL: "https://assetpdsk-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "assetpdsk",
+            storageBucket: "assetpdsk.firebasestorage.app",
+            messagingSenderId: "808070903178",
+            appId: "1:808070903178:web:93b279880c01372f71c473"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let mySpreadsheet = null;
+        let userUid = null;
+        const syncStatus = document.getElementById('syncStatus');
+
+        // 1. CEK OTENTIKASI (Hanya yang login yang bisa buka)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userUid = user.uid; // Simpan UID untuk nama folder database
+                muatDataDariFirebase(userUid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // 2. AMBIL DATA DARI FIREBASE SAAT HALAMAN DIBUKA
+        function muatDataDariFirebase(uid) {
+            syncStatus.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Memuat data...';
+            
+            get(child(ref(db), `laporan_klinik/${uid}`)).then((snapshot) => {
+                let dataAwal = [];
+                
+                if (snapshot.exists()) {
+                    // Jika data sudah pernah ada di database, ambil data tersebut
+                    dataAwal = snapshot.val();
+                } else {
+                    // Jika belum ada data sama sekali, buat 10 baris kosong sebagai template
+                    for(let i=0; i<10; i++) {
+                        dataAwal.push(['', '', '', '', '', '']); 
+                    }
+                }
+
+                inisialisasiExcel(dataAwal);
+                syncStatus.innerHTML = '<i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi';
+            });
+        }
+
+        // 3. INISIALISASI TABEL EXCEL (JSPREADSHEET)
+        function inisialisasiExcel(data) {
+            mySpreadsheet = jspreadsheet(document.getElementById('spreadsheet'), {
+                data: data,
+                columns: [
+                    { type: 'calendar', title: 'Tanggal Kunjungan', width: 150, options: { format:'DD/MM/YYYY' } },
+                    { type: 'text', title: 'Nama Lengkap Pasien', width: 250 },
+                    { type: 'dropdown', title: 'Jenis Kelamin', width: 120, source: ['Laki-laki', 'Perempuan'] },
+                    { type: 'dropdown', title: 'Poli / Layanan', width: 150, source: ['Poli Umum', 'Poli Gigi', 'KIA', 'Laboratorium', 'UGD'] },
+                    { type: 'dropdown', title: 'Status', width: 120, source: ['Selesai', 'Rujuk RS', 'Rawat Inap'] },
+                    { type: 'text', title: 'Diagnosa / Keterangan', width: 300 }
+                ],
+                // Fungsi-fungsi di bawah ini yang memicu penyimpanan otomatis ke Firebase
+                onchange: simpanKeFirebase,
+                oninsertrow: simpanKeFirebase,
+                ondeleterow: simpanKeFirebase
+            });
+        }
+
+        // 4. FUNGSI SIMPAN OTOMATIS (AUTO-SAVE) KE FIREBASE
+        let timeoutSimpan; // Mencegah spam klik ke server
+        function simpanKeFirebase() {
+            if(!mySpreadsheet) return;
+            
+            // Ubah status menjadi menyimpan
+            syncStatus.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin" style="color: #eab308;"></i> Menyimpan perubahan...';
+
+            // Beri jeda 1 detik agar tidak memberatkan server saat pengguna mengetik cepat
+            clearTimeout(timeoutSimpan);
+            timeoutSimpan = setTimeout(() => {
+                // Ambil seluruh isi tabel Excel
+                const dataTerbaru = mySpreadsheet.getData();
+                
+                // Kirim ke Realtime Database berdasarkan UID Klinik tersebut
+                set(ref(db, `laporan_klinik/${userUid}`), dataTerbaru)
+                    .then(() => {
+                        syncStatus.innerHTML = '<i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi';
+                    })
+                    .catch((error) => {
+                        syncStatus.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: #ef4444;"></i> Gagal menyimpan: ${error.message}`;
+                    });
+            }, 1000); // jeda 1 detik
+        }
+
+        // 5. LOGOUT
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
 </body>
 </html>
-dashboard-coming-soon.html
-Displaying dashboard-coming-soon.html.
