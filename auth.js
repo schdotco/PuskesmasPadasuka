@@ -1,6 +1,8 @@
-// Import Firebase dari CDN Google
+// Import Firebase dari CDN Google (Versi Modular)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+// TAMBAHAN: Import Realtime Database untuk mengecek Role
+import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 // Konfigurasi Firebase Project Anda
 const firebaseConfig = {
@@ -14,15 +16,14 @@ const firebaseConfig = {
     measurementId: "G-LWGLJ00M3C"
 };
 
-// Inisialisasi Firebase & Auth
+// Inisialisasi Firebase, Auth, dan Database
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 // ----------------------------------------------------
-// UI INTERACTION LOGIC
+// UI INTERACTION LOGIC (Mata Password)
 // ----------------------------------------------------
-
-// Fitur Tampilkan/Sembunyikan Password
 document.querySelector('#togglePassword').addEventListener('click', function () {
     const passwordInput = document.querySelector('#password');
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -32,30 +33,22 @@ document.querySelector('#togglePassword').addEventListener('click', function () 
     this.classList.toggle('fa-eye-slash');
 });
 
-
 // ----------------------------------------------------
-// FIREBASE AUTHENTICATION LOGIC
+// FIREBASE AUTHENTICATION & REDIRECT LOGIC
 // ----------------------------------------------------
-
-// Tangkap Elemen Form
 const loginForm = document.getElementById('loginForm');
 const btnLogin = document.getElementById('btnLogin');
 const btnText = document.getElementById('btnText');
 const btnIcon = document.getElementById('btnIcon');
 
 loginForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Mencegah reload halaman
+    e.preventDefault(); 
     
-    let email = document.getElementById('username').value.trim();
+    const email = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const rememberMe = document.getElementById('rememberMe').checked;
 
-    // Trik NIP ke Email untuk kompatibilitas Firebase
-    if (!email.includes('@')) {
-        email = email + '@padasuka.go.id';
-    }
-
-    // Set Loading State pada Tombol
+    // Set status tombol loading
     btnLogin.disabled = true;
     btnText.innerHTML = 'Memproses...';
     btnIcon.className = 'fa-solid fa-circle-notch fa-spin';
@@ -65,32 +58,61 @@ loginForm.addEventListener('submit', (e) => {
 
     setPersistence(auth, persistenceType)
         .then(() => {
-            // Eksekusi Login ke Firebase
+            // 1. Eksekusi Login ke Authentication
             return signInWithEmailAndPassword(auth, email, password);
         })
         .then((userCredential) => {
-            // JIKA BERHASIL LOGIN
-            Swal.fire({
-                icon: 'success',
-                title: 'Akses Diberikan',
-                text: 'Selamat datang di Sistem Asset Puskesmas!',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                // Arahkan ke halaman utama/dashboard
-                window.location.href = 'dashboard.html'; 
-            });
+            // 2. Jika login berhasil, ambil UID User
+            const user = userCredential.user;
+            
+            // 3. Cari data user ini di Realtime Database untuk melihat Role-nya
+            const dbRef = ref(db);
+            return get(child(dbRef, `users/${user.uid}`));
+        })
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                const userRole = userData.role; // Ambil nilai Role dari database
+
+                // Notifikasi Sukses
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Akses Diberikan',
+                    text: `Selamat datang, ${userData.nama || 'Pengguna'}!`,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    
+                    // -------------------------------------------------
+                    // LOGIKA REDIRECT BERDASARKAN ROLE
+                    // -------------------------------------------------
+                    if (userRole === 'admin') {
+                        // Jika Admin, buka halaman Kelola User
+                        window.location.href = 'admin-user.html';
+                    } else {
+                        // Jika Pegawai Biasa (Bidan, Dokter, dll), buka Dashboard
+                        window.location.href = 'dashboard.html'; 
+                    }
+                    
+                });
+
+            } else {
+                // Kasus langka: Punya akun Auth tapi tidak ada di Database Users
+                Swal.fire('Data Tidak Lengkap', 'Akun Anda belum dikonfigurasi dengan peran (Role) yang valid.', 'warning');
+                auth.signOut(); // Paksa logout
+                resetButton();
+            }
         })
         .catch((error) => {
             // JIKA GAGAL LOGIN
             let errorMessage = 'Gagal terhubung ke server.';
             
             if(error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                errorMessage = 'Email/NIP atau Kata Sandi Anda salah!';
+                errorMessage = 'Email atau Kata Sandi Anda salah!';
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = 'Terlalu banyak percobaan. Coba lagi nanti.';
             } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'Format Email/NIP tidak valid.';
+                errorMessage = 'Format Email tidak valid.';
             }
 
             Swal.fire({
@@ -100,9 +122,13 @@ loginForm.addEventListener('submit', (e) => {
                 confirmButtonColor: '#059669'
             });
 
-            // Reset tombol ke keadaan awal
-            btnLogin.disabled = false;
-            btnText.innerHTML = 'Masuk';
-            btnIcon.className = 'fa-solid fa-arrow-right-to-bracket';
+            resetButton();
         });
 });
+
+// Fungsi untuk mengembalikan tombol ke keadaan semula
+function resetButton() {
+    btnLogin.disabled = false;
+    btnText.innerHTML = 'Masuk';
+    btnIcon.className = 'fa-solid fa-arrow-right-to-bracket';
+}
