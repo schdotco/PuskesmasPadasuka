@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segera Hadir - UPTD Puskesmas Padasuka</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables diambil dari file sebelumnya untuk konsistensi */
+        :root {
+            --primary: #059669; /* Hijau Kesehatan */
+            --primary-dark: #047857;
+            --danger: #ef4444;
+            --bg-light: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Style disamakan dengan Admin Panel */
+        .admin-navbar {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-logout {
+            background-color: #fee2e2;
+            color: var(--danger);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout:hover { 
+            background-color: #fca5a5; 
+        }
+
+        /* Container untuk Pesan Tengah */
+        .container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .maintenance-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 50px 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.02);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .maintenance-icon {
+            font-size: 70px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .maintenance-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .maintenance-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-back {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Responsiveness di HP */
+        @media (max-width: 600px) {
+            .admin-navbar {
+                padding: 15px 20px;
+            }
+            .maintenance-card {
+                padding: 40px 20px;
+            }
+            .brand span {
+                display: none; /* Sembunyikan teks brand di layar kecil, sisakan ikon */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="admin-navbar">
+        <div class="brand">
+            <i class="fa-solid fa-house-medical"></i>
+            <span>UPTD Puskesmas Padasuka</span>
+        </div>
+        <button id="btnLogout" class="btn-logout" onclick="window.location.href='login.html'">
+            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </button>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <div class="maintenance-card">
+            <!-- Ikon Sedang Perbaikan -->
+            <i class="fa-solid fa-person-digging maintenance-icon"></i>
+            
+            <h1 class="maintenance-title">Halaman Segera Hadir</h1>
+            
+            <p class="maintenance-text">
+                Mohon maaf, halaman dashboard ini masih dalam tahap pengembangan dan perbaikan (Under Maintenance). 
+                Kami sedang menyiapkan fitur terbaik untuk Anda. Silakan periksa kembali beberapa saat lagi.
+            </p>
+            
+            <a href="login.html" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Login
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2026 UPTD Puskesmas Padasuka.<br>Dinas Kesehatan.
+    </div>
+
+</body>
+</html>
+dashboard-coming-soon.html
+Displaying dashboard-coming-soon.html.
