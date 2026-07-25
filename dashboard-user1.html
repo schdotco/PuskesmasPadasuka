@@ -3,25 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Laporan - UPTD Puskesmas Padasuka</title>
+    <title>Upload Laporan - UPTD Puskesmas Padasuka</title>
     
-    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- LIBRARY JSPREADSHEET (EXCEL HTML) -->
-    <script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
-    <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
-    <script src="https://jsuites.net/v4/jsuites.js"></script>
-    <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
-    
-    <!-- SweetAlert2 untuk Notifikasi -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
-            --primary: #059669; 
+            --primary: #059669;
             --primary-dark: #047857;
             --danger: #ef4444;
             --bg-light: #f3f4f6;
@@ -31,12 +21,7 @@
             --border: #e5e7eb;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
             background-color: var(--bg-light);
@@ -46,7 +31,6 @@
             min-height: 100vh;
         }
 
-        /* Navbar Style */
         .admin-navbar {
             background-color: var(--card-bg);
             padding: 15px 30px;
@@ -75,18 +59,13 @@
             cursor: pointer;
             font-weight: 600;
             transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-
         .btn-logout:hover { background-color: #fca5a5; }
 
-        /* Container & Card */
         .container {
             flex-grow: 1;
-            padding: 30px;
-            max-width: 1200px; /* Diperlebar untuk tabel Excel */
+            padding: 40px 20px;
+            max-width: 600px;
             margin: 0 auto;
             width: 100%;
         }
@@ -98,87 +77,122 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
-        }
-
         .card-title {
             font-size: 20px;
             font-weight: 700;
-            color: var(--text-main);
+            margin-bottom: 10px;
         }
 
-        .sync-status {
-            font-size: 13px;
-            color: var(--text-muted);
+        .user-info {
+            background: #ecfdf5;
+            color: var(--primary-dark);
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            transition: 0.3s;
         }
 
-        /* Penyesuaian agar font tabel tidak terlalu besar */
-        .jexcel { font-family: 'Inter', sans-serif !important; font-size: 14px; }
+        .btn-submit:hover { background-color: var(--primary-dark); }
+        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
 
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
+        .footer { text-align: center; padding: 20px; font-size: 13px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="admin-navbar">
         <div class="brand">
             <i class="fa-solid fa-house-medical"></i>
-            <span>UPTD Puskesmas Padasuka - Dashboard Klinik</span>
+            <span>UPTD Puskesmas Padasuka</span>
         </div>
         <button id="btnLogout" class="btn-logout">
             <i class="fa-solid fa-right-from-bracket"></i> Keluar
         </button>
     </nav>
 
-    <!-- Content -->
     <div class="container">
         <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Upload Laporan Drive</h2>
             
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title"><i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Laporan Bulanan Pasien</h2>
-                    <p style="font-size: 14px; color: var(--text-muted); margin-top: 5px;">Data akan tersimpan otomatis (Auto-Save) setiap kali Anda selesai mengetik.</p>
-                </div>
-                <div class="sync-status" id="syncStatus">
-                    <i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi
-                </div>
+            <div class="user-info" id="userInfo">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
             </div>
 
-            <!-- Wadah untuk Tabel Excel -->
-            <div style="overflow-x: auto;">
-                <div id="spreadsheet"></div>
-            </div>
+            <form id="uploadForm">
+                
+                <!-- 1. PERTANYAAN BEBAS (KETERANGAN LAPORAN) -->
+                <div class="form-group">
+                    <label for="keterangan">Keterangan / Periode Laporan</label>
+                    <input type="text" id="keterangan" class="form-control" required placeholder="Contoh: Laporan Bulanan Pasien - Juli 2026">
+                </div>
 
+                <!-- 2. KOLOM UPLOAD FILE -->
+                <div class="form-group">
+                    <label for="fileInput">Pilih File (PDF / Excel / Gambar / Word)</label>
+                    <input type="file" id="fileInput" class="form-control" required>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Unggah ke Google Drive
+                </button>
+
+            </form>
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         &copy; 2026 UPTD Puskesmas Padasuka. Dinas Kesehatan.
     </div>
 
-    <!-- Script Logika Firebase & Jspreadsheet -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get, child, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Konfigurasi Firebase
+        // URL GOOGLE APPS SCRIPT ANDA SUDAH DIMASUKKAN DI SINI
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOQ6vaI2EzbXZYmp9vPBNABHmF3FwQ1IcU-b7cW-YzA-o8IZK1VnwYB3An4OxtfmJ-/exec";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCVldfmqyfy2y4c695qyjPagVbir0LnoZw",
             authDomain: "assetpdsk.firebaseapp.com",
@@ -193,91 +207,121 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let mySpreadsheet = null;
-        let userUid = null;
-        const syncStatus = document.getElementById('syncStatus');
+        let currentUserData = null;
+        let currentUserUid = null;
 
-        // 1. CEK OTENTIKASI (Hanya yang login yang bisa buka)
+        // 1. OTENTIKASI & AMBIL DATA PROFIL
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                userUid = user.uid; // Simpan UID untuk nama folder database
-                muatDataDariFirebase(userUid);
+                currentUserUid = user.uid;
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        currentUserData = snapshot.val();
+                        
+                        // Menyesuaikan tampilan Role
+                        let roleName = currentUserData.role;
+                        if(roleName === 'admin') roleName = 'Administrator';
+                        if(roleName === 'user1') roleName = 'Mutiara Cikutra';
+                        if(roleName === 'user2') roleName = 'Asri Husada I';
+                        if(roleName === 'user3') roleName = 'Seno Medika';
+                        if(roleName === 'user4') roleName = 'RSIA Al Islam';
+                        if(roleName === 'user5') roleName = 'Klinik Pussenif';
+                        if(roleName === 'user6') roleName = 'RS Santo Yusup';
+
+                        document.getElementById('userInfo').innerHTML = `
+                            <i class="fa-solid fa-hospital-user"></i> Login sebagai: <strong>${currentUserData.nama}</strong> (${roleName})
+                        `;
+                    }
+                });
             } else {
                 window.location.href = 'login.html';
             }
         });
 
-        // 2. AMBIL DATA DARI FIREBASE SAAT HALAMAN DIBUKA
-        function muatDataDariFirebase(uid) {
-            syncStatus.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Memuat data...';
+        // 2. PROSES UPLOAD FILE
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const keterangan = document.getElementById('keterangan').value.trim();
+            const fileInput = document.getElementById('fileInput').files[0];
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            if (!fileInput) return;
             
-            get(child(ref(db), `laporan_klinik/${uid}`)).then((snapshot) => {
-                let dataAwal = [];
-                
-                if (snapshot.exists()) {
-                    // Jika data sudah pernah ada di database, ambil data tersebut
-                    dataAwal = snapshot.val();
+            // Batasi ukuran file (Opsional, di sini batasnya sekitar 5MB agar tidak error di base64)
+            if(fileInput.size > 5 * 1024 * 1024) {
+                Swal.fire('File Terlalu Besar', 'Maksimal ukuran file adalah 5MB.', 'warning');
+                return;
+            }
+
+            // Tampilkan Loading
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mengunggah ke Drive...';
+
+            try {
+                // Konversi File ke Base64
+                const base64File = await convertBase64(fileInput);
+
+                const payload = {
+                    fileName: fileInput.name,
+                    fileType: fileInput.type,
+                    fileBase64: base64File.split(',')[1], // Ambil murni kode base64
+                    userRole: currentUserData.role,
+                    keterangan: keterangan
+                };
+
+                // Kirim ke Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // Simpan Riwayat Upload ke Firebase Database
+                    const newUploadRef = push(ref(db, `riwayat_upload/${currentUserUid}`));
+                    await set(newUploadRef, {
+                        keterangan: keterangan,
+                        fileName: result.fileName,
+                        fileUrl: result.fileUrl,
+                        folderName: result.folderName,
+                        uploadedAt: new Date().toISOString()
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Upload Berhasil!',
+                        text: `File Anda telah tersimpan rapi di folder ${result.folderName} Google Drive.`,
+                        confirmButtonColor: '#059669'
+                    });
+
+                    document.getElementById('uploadForm').reset();
                 } else {
-                    // Jika belum ada data sama sekali, buat 10 baris kosong sebagai template
-                    for(let i=0; i<10; i++) {
-                        dataAwal.push(['', '', '', '', '', '']); 
-                    }
+                    throw new Error(result.message);
                 }
 
-                inisialisasiExcel(dataAwal);
-                syncStatus.innerHTML = '<i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi';
+            } catch (error) {
+                Swal.fire('Gagal Upload', error.message || 'Terjadi kesalahan sistem.', 'error');
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Unggah ke Google Drive';
+            }
+        });
+
+        // Helper fungsi konversi file ke base64
+        function convertBase64(file) {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => resolve(fileReader.result);
+                fileReader.onerror = (error) => reject(error);
             });
         }
 
-        // 3. INISIALISASI TABEL EXCEL (JSPREADSHEET)
-        function inisialisasiExcel(data) {
-            mySpreadsheet = jspreadsheet(document.getElementById('spreadsheet'), {
-                data: data,
-                columns: [
-                    { type: 'calendar', title: 'Tanggal Kunjungan', width: 150, options: { format:'DD/MM/YYYY' } },
-                    { type: 'text', title: 'Nama Lengkap Pasien', width: 250 },
-                    { type: 'dropdown', title: 'Jenis Kelamin', width: 120, source: ['Laki-laki', 'Perempuan'] },
-                    { type: 'dropdown', title: 'Poli / Layanan', width: 150, source: ['Poli Umum', 'Poli Gigi', 'KIA', 'Laboratorium', 'UGD'] },
-                    { type: 'dropdown', title: 'Status', width: 120, source: ['Selesai', 'Rujuk RS', 'Rawat Inap'] },
-                    { type: 'text', title: 'Diagnosa / Keterangan', width: 300 }
-                ],
-                // Fungsi-fungsi di bawah ini yang memicu penyimpanan otomatis ke Firebase
-                onchange: simpanKeFirebase,
-                oninsertrow: simpanKeFirebase,
-                ondeleterow: simpanKeFirebase
-            });
-        }
-
-        // 4. FUNGSI SIMPAN OTOMATIS (AUTO-SAVE) KE FIREBASE
-        let timeoutSimpan; // Mencegah spam klik ke server
-        function simpanKeFirebase() {
-            if(!mySpreadsheet) return;
-            
-            // Ubah status menjadi menyimpan
-            syncStatus.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin" style="color: #eab308;"></i> Menyimpan perubahan...';
-
-            // Beri jeda 1 detik agar tidak memberatkan server saat pengguna mengetik cepat
-            clearTimeout(timeoutSimpan);
-            timeoutSimpan = setTimeout(() => {
-                // Ambil seluruh isi tabel Excel
-                const dataTerbaru = mySpreadsheet.getData();
-                
-                // Kirim ke Realtime Database berdasarkan UID Klinik tersebut
-                set(ref(db, `laporan_klinik/${userUid}`), dataTerbaru)
-                    .then(() => {
-                        syncStatus.innerHTML = '<i class="fa-solid fa-cloud-check" style="color: #10b981;"></i> Data Tersinkronisasi';
-                    })
-                    .catch((error) => {
-                        syncStatus.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: #ef4444;"></i> Gagal menyimpan: ${error.message}`;
-                    });
-            }, 1000); // jeda 1 detik
-        }
-
-        // 5. LOGOUT
+        // LOGOUT
         document.getElementById('btnLogout').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = 'login.html';
-            });
+            signOut(auth).then(() => { window.location.href = 'login.html'; });
         });
     </script>
 </body>
