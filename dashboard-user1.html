@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Laporan - UPTD Puskesmas Padasuka</title>
+    <title>Matriks Laporan - UPTD Puskesmas Padasuka</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -13,12 +13,13 @@
         :root {
             --primary: #059669;
             --primary-dark: #047857;
-            --danger: #ef4444;
-            --bg-light: #f3f4f6;
+            --bg-light: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
+            --text-main: #334155;
+            --border: #e2e8f0;
+            --row-bg: #d1fae5; /* Hijau muda seperti di gambar */
+            --btn-blue: #06b6d4; /* Biru cerah tombol dokumen */
+            --btn-blue-hover: #0891b2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -26,11 +27,10 @@
         body {
             background-color: var(--bg-light);
             color: var(--text-main);
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
         }
 
+        /* Navbar */
         .admin-navbar {
             background-color: var(--card-bg);
             padding: 15px 30px;
@@ -38,113 +38,116 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
         }
 
-        .brand {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .brand { font-weight: 700; font-size: 18px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .btn-logout { background-color: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        
+        /* Container & Header */
+        .container { padding: 30px; max-width: 1400px; margin: 0 auto; }
+        .page-header { margin-bottom: 20px; }
+        .page-header h1 { font-size: 24px; color: #1e293b; margin-bottom: 5px; }
+        .page-header p { font-size: 14px; color: #64748b; text-transform: uppercase; }
+
+        /* User Info Box */
+        .user-info { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; display: inline-block; font-weight: 600; color: var(--primary-dark); }
+
+        /* Tabel Matriks */
+        .table-container { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        
+        th { 
+            background: #f8fafc; 
+            padding: 15px; 
+            text-align: left; 
+            font-size: 12px; 
+            color: #64748b; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
         }
 
-        .btn-logout {
-            background-color: #fee2e2;
-            color: var(--danger);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-logout:hover { background-color: #fca5a5; }
-
-        .container {
-            flex-grow: 1;
-            padding: 40px 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
+        td { 
+            padding: 20px 15px; 
+            border-bottom: 1px solid #bbf7d0; 
+            background-color: var(--row-bg); /* Warna hijau row */
+            vertical-align: top;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .col-no { width: 80px; font-weight: 600; color: #475569; }
+        .col-nama { width: 45%; }
+        
+        .badge-kategori { 
+            display: inline-block; 
+            background: #a7f3d0; 
+            color: #065f46; 
+            font-size: 10px; 
+            font-weight: 700; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            margin-bottom: 8px; 
+            text-transform: uppercase;
         }
 
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 10px;
+        .judul-indikator { font-size: 14px; color: #1e293b; font-weight: 500; line-height: 1.5; }
+
+        /* Status & Tanggal */
+        .status-container { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+        
+        .badge-status { 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
         }
+        .status-belum { background-color: #cbd5e1; color: #475569; }
+        .status-sudah { background-color: #34d399; color: #ffffff; }
+        
+        .tgl-upload { font-size: 11px; color: #065f46; font-weight: 500; }
 
-        .user-info {
-            background: #ecfdf5;
-            color: var(--primary-dark);
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 25px;
-            font-weight: 500;
-        }
-
-        .form-group { margin-bottom: 20px; }
-
-        label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
-        }
-
-        .btn-submit {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            font-size: 15px;
-            display: flex;
-            justify-content: center;
+        /* Tombol Action */
+        .btn-upload { 
+            background-color: var(--btn-blue); 
+            color: white; 
+            border: none; 
+            padding: 10px 16px; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 13px;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: 0.3s;
+            transition: 0.2s;
+        }
+        .btn-upload:hover { background-color: var(--btn-blue-hover); }
+        .btn-upload:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        
+        .btn-lihat {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-top: 5px;
         }
 
-        .btn-submit:hover { background-color: var(--primary-dark); }
-        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
-
-        .footer { text-align: center; padding: 20px; font-size: 13px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
     <nav class="admin-navbar">
         <div class="brand">
-            <i class="fa-solid fa-house-medical"></i>
-            <span>UPTD Puskesmas Padasuka</span>
+            <i class="fa-solid fa-house-medical"></i> UPTD Puskesmas Padasuka
         </div>
         <button id="btnLogout" class="btn-logout">
             <i class="fa-solid fa-right-from-bracket"></i> Keluar
@@ -152,45 +155,85 @@
     </nav>
 
     <div class="container">
-        <div class="card">
-            <h2 class="card-title"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Upload Laporan Drive</h2>
-            
-            <div class="user-info" id="userInfo">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
-            </div>
+        
+        <div class="page-header">
+            <h1>Laporan Jejaring/h1>
+            <p>Indikator Laporan</p>
+        </div>
 
-            <form id="uploadForm">
-                
-                <!-- 1. PERTANYAAN BEBAS (KETERANGAN LAPORAN) -->
-                <div class="form-group">
-                    <label for="keterangan">Keterangan / Periode Laporan</label>
-                    <input type="text" id="keterangan" class="form-control" required placeholder="Contoh: Laporan Bulanan Pasien - Juli 2026">
-                </div>
+        <div class="user-info" id="userInfo">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
+        </div>
 
-                <!-- 2. KOLOM UPLOAD FILE -->
-                <div class="form-group">
-                    <label for="fileInput">Pilih File (PDF / Excel / Gambar / Word)</label>
-                    <input type="file" id="fileInput" class="form-control" required>
-                </div>
-
-                <button type="submit" id="btnSubmit" class="btn-submit">
-                    <i class="fa-solid fa-paper-plane"></i> Unggah ke Google Drive
-                </button>
-
-            </form>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-no">NO</th>
+                        <th class="col-nama">NAMA INDIKATOR</th>
+                        <th>DOKUMEN PENDUKUNG - STATUS</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="4" style="text-align: center; padding: 30px;">Memuat matriks laporan...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="footer">
-        &copy; 2026 UPTD Puskesmas Padasuka. Dinas Kesehatan.
-    </div>
+    <!-- Hidden File Input Global -->
+    <input type="file" id="globalFileInput" style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, child, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, get, set, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // URL GOOGLE APPS SCRIPT ANDA SUDAH DIMASUKKAN DI SINI
+        // =========================================================================
+        // 1. DATA DAFTAR LAPORAN YANG HARUS DIUPLOAD (BISA DITAMBAH BEBAS)
+        // =========================================================================
+        const daftarIndikator = [
+            {
+                id: "K1.user1",
+                kategori: "Laporan Bulanan Ibu Hamil",
+                nama: "Laporan Bulanan Ibu Hamil"
+            },
+            {
+                id: "K2.user1",
+                kategori: "⁠Laporan Bulanan Ibu Bersalin",
+                nama: "⁠Laporan Bulanan Ibu Bersalin"
+            },
+            {
+                id: "K3.user1",
+                kategori: "⁠Laporan Bulanan Imunisasi",
+                nama: "⁠Laporan Bulanan Imunisasi"
+            },
+            {
+                id: "K4.user1",
+                kategori: "⁠Laporan Bulanan Pelayanan Penyakit Tidak Menular",
+                nama: "⁠Laporan Bulanan Pelayanan Penyakit Tidak Menular"
+            },
+            {
+                id: "K5.user1",
+                kategori: "⁠⁠Laporan Triwulanan BNBA Kohort Hipertensi",
+                nama: "⁠⁠Laporan Triwulanan BNBA Kohort Hipertensi"
+            },
+            {
+                id: "K6.user1",
+                kategori: "⁠⁠⁠⁠Laporan Triwulanan BNBA Kohort DM",
+                nama: "⁠⁠Laporan Triwulanan BNBA Kohort DM"
+            },
+            {
+                id: "K7.user1",
+                kategori: "⁠⁠⁠⁠Laporan Cek Kesehatan Gratis",
+                nama: "⁠⁠Laporan CKG"
+            },
+        ];
+
+        // =========================================================================
+        // 2. KONFIGURASI API & FIREBASE
+        // =========================================================================
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOQ6vaI2EzbXZYmp9vPBNABHmF3FwQ1IcU-b7cW-YzA-o8IZK1VnwYB3An4OxtfmJ-/exec";
 
         const firebaseConfig = {
@@ -209,65 +252,133 @@
 
         let currentUserData = null;
         let currentUserUid = null;
+        let indikatorAktifUntukUpload = null; // Menyimpan ID indikator yang sedang diklik upload
 
-        // 1. OTENTIKASI & AMBIL DATA PROFIL
+        // =========================================================================
+        // 3. OTENTIKASI & RENDER TABEL
+        // =========================================================================
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserUid = user.uid;
+                
+                // Ambil Nama Klinik
                 get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         currentUserData = snapshot.val();
-                        
-                        // Menyesuaikan tampilan Role
-                        let roleName = currentUserData.role;
-                        if(roleName === 'admin') roleName = 'Administrator';
-                        if(roleName === 'user1') roleName = 'Mutiara Cikutra';
-                        if(roleName === 'user2') roleName = 'Asri Husada I';
-                        if(roleName === 'user3') roleName = 'Seno Medika';
-                        if(roleName === 'user4') roleName = 'RSIA Al Islam';
-                        if(roleName === 'user5') roleName = 'Klinik Pussenif';
-                        if(roleName === 'user6') roleName = 'RS Santo Yusup';
-
-                        document.getElementById('userInfo').innerHTML = `
-                            <i class="fa-solid fa-hospital-user"></i> Login sebagai: <strong>${currentUserData.nama}</strong> (${roleName})
-                        `;
+                        document.getElementById('userInfo').innerHTML = `<i class="fa-solid fa-hospital"></i> ${currentUserData.nama} (${currentUserData.role})`;
                     }
                 });
+
+                // Render Tabel & Dengarkan Perubahan Upload
+                renderTabelMatriks(currentUserUid);
+
             } else {
                 window.location.href = 'login.html';
             }
         });
 
-        // 2. PROSES UPLOAD FILE
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const keterangan = document.getElementById('keterangan').value.trim();
-            const fileInput = document.getElementById('fileInput').files[0];
-            const btnSubmit = document.getElementById('btnSubmit');
-
-            if (!fileInput) return;
+        function renderTabelMatriks(uid) {
+            const tableBody = document.getElementById('tableBody');
             
-            // Batasi ukuran file (Opsional, di sini batasnya sekitar 5MB agar tidak error di base64)
-            if(fileInput.size > 5 * 1024 * 1024) {
+            // Memantau tabel riwayat_upload khusus untuk user ini secara realtime
+            const uploadRef = ref(db, `matriks_upload/${uid}`);
+            
+            onValue(uploadRef, (snapshot) => {
+                const dataUpload = snapshot.exists() ? snapshot.val() : {};
+                tableBody.innerHTML = ''; // Bersihkan tabel
+
+                daftarIndikator.forEach((item) => {
+                    // Cek apakah item ini sudah pernah diupload
+                    const statusData = dataUpload[item.id]; 
+                    const isUploaded = !!statusData;
+
+                    // Format Tanggal jika ada
+                    let tanggalTeks = "";
+                    if (isUploaded && statusData.uploadedAt) {
+                        const d = new Date(statusData.uploadedAt);
+                        tanggalTeks = `<div class="tgl-upload"><i class="fa-regular fa-clock"></i> ${d.toLocaleDateString('id-ID')} ${d.getHours()}:${d.getMinutes()}</div>`;
+                    }
+
+                    // Tentukan Badge Status
+                    const badgeClass = isUploaded ? 'status-sudah' : 'status-belum';
+                    const badgeText = isUploaded ? 'DISETUJUI / ADA' : 'BELUM ADA';
+
+                    // Tentukan Tombol (Update atau Upload Baru)
+                    const btnUploadText = isUploaded ? '<i class="fa-solid fa-file-arrow-up"></i> Update Dokumen' : '<i class="fa-solid fa-file-arrow-up"></i> Upload Dokumen';
+                    
+                    // Tombol Lihat Dokumen (Hanya muncul jika sudah upload)
+                    const btnLihat = isUploaded ? `<br><a href="${statusData.fileUrl}" target="_blank" class="btn-lihat"><i class="fa-solid fa-eye"></i> Lihat File</a>` : '';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="col-no">${item.id}</td>
+                        <td class="col-nama">
+                            <span class="badge-kategori">${item.kategori}</span>
+                            <div class="judul-indikator">${item.nama}</div>
+                        </td>
+                        <td>
+                            <div class="status-container">
+                                <span class="badge-status ${badgeClass}">${badgeText}</span>
+                                ${tanggalTeks}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-upload" data-id="${item.id}" data-nama="${item.nama}" id="btn-${item.id}">
+                                ${btnUploadText}
+                            </button>
+                            ${btnLihat}
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                // Pasang Event Listener untuk semua tombol Upload
+                document.querySelectorAll('.btn-upload').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        indikatorAktifUntukUpload = {
+                            id: this.dataset.id,
+                            nama: this.dataset.nama
+                        };
+                        // Pemicu klik pada input file tersembunyi
+                        document.getElementById('globalFileInput').click();
+                    });
+                });
+            });
+        }
+
+        // =========================================================================
+        // 4. PROSES UPLOAD FILE KE GOOGLE DRIVE & FIREBASE
+        // =========================================================================
+        const fileInput = document.getElementById('globalFileInput');
+        
+        fileInput.addEventListener('change', async function() {
+            if (!this.files || this.files.length === 0 || !indikatorAktifUntukUpload) return;
+            
+            const file = this.files[0];
+            const indikatorId = indikatorAktifUntukUpload.id;
+            const btnTerkait = document.getElementById(`btn-${indikatorId}`);
+
+            // Cek Ukuran
+            if(file.size > 5 * 1024 * 1024) {
                 Swal.fire('File Terlalu Besar', 'Maksimal ukuran file adalah 5MB.', 'warning');
+                this.value = ''; // Reset input
                 return;
             }
 
-            // Tampilkan Loading
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mengunggah ke Drive...';
+            // UI Loading
+            const originalBtnText = btnTerkait.innerHTML;
+            btnTerkait.disabled = true;
+            btnTerkait.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mengunggah...';
 
             try {
-                // Konversi File ke Base64
-                const base64File = await convertBase64(fileInput);
-
+                const base64File = await convertBase64(file);
+                
+                // Payload untuk Google Apps Script
                 const payload = {
-                    fileName: fileInput.name,
-                    fileType: fileInput.type,
-                    fileBase64: base64File.split(',')[1], // Ambil murni kode base64
-                    userRole: currentUserData.role,
-                    keterangan: keterangan
+                    fileName: `[${indikatorId}] ${file.name}`, // Tambahkan kode ID di nama file
+                    fileType: file.type,
+                    fileBase64: base64File.split(',')[1],
+                    userRole: currentUserData.role
                 };
 
                 // Kirim ke Google Apps Script
@@ -275,51 +386,53 @@
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-
+                
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    // Simpan Riwayat Upload ke Firebase Database
-                    const newUploadRef = push(ref(db, `riwayat_upload/${currentUserUid}`));
-                    await set(newUploadRef, {
-                        keterangan: keterangan,
+                    
+                    // Simpan data ke Realtime Database berdasarkan ID Indikator
+                    // Format path: matriks_upload / UID_KLINIK / K1.1.1.1
+                    await set(ref(db, `matriks_upload/${currentUserUid}/${indikatorId}`), {
+                        indikatorNama: indikatorAktifUntukUpload.nama,
                         fileName: result.fileName,
                         fileUrl: result.fileUrl,
-                        folderName: result.folderName,
                         uploadedAt: new Date().toISOString()
                     });
 
                     Swal.fire({
                         icon: 'success',
                         title: 'Upload Berhasil!',
-                        text: `File Anda telah tersimpan rapi di folder ${result.folderName} Google Drive.`,
-                        confirmButtonColor: '#059669'
+                        text: `Dokumen untuk indikator ${indikatorId} telah tersimpan.`,
+                        timer: 2000,
+                        showConfirmButton: false
                     });
 
-                    document.getElementById('uploadForm').reset();
                 } else {
                     throw new Error(result.message);
                 }
 
             } catch (error) {
-                Swal.fire('Gagal Upload', error.message || 'Terjadi kesalahan sistem.', 'error');
+                Swal.fire('Gagal Upload', error.message || 'Terjadi kesalahan jaringan.', 'error');
+                btnTerkait.disabled = false;
+                btnTerkait.innerHTML = originalBtnText;
             } finally {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Unggah ke Google Drive';
+                this.value = ''; // Reset file input agar bisa milih file yang sama lagi jika perlu
             }
         });
 
-        // Helper fungsi konversi file ke base64
         function convertBase64(file) {
             return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file);
-                fileReader.onload = () => resolve(fileReader.result);
-                fileReader.onerror = (error) => reject(error);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
             });
         }
 
-        // LOGOUT
+        // =========================================================================
+        // 5. LOGOUT
+        // =========================================================================
         document.getElementById('btnLogout').addEventListener('click', () => {
             signOut(auth).then(() => { window.location.href = 'login.html'; });
         });
