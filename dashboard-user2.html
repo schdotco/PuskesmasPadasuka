@@ -49,8 +49,55 @@
         .page-header h1 { font-size: 24px; color: #1e293b; margin-bottom: 5px; }
         .page-header p { font-size: 14px; color: #64748b; text-transform: uppercase; }
 
+        /* --- BUNGKUSAN BARU UNTUK INFO USER & TOMBOL FORMAT --- */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         /* User Info Box */
-        .user-info { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; display: inline-block; font-weight: 600; color: var(--primary-dark); }
+        .user-info { 
+            background: #fff; 
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+            display: inline-block; 
+            font-weight: 600; 
+            color: var(--primary-dark); 
+        }
+
+        /* Tombol Format Laporan */
+        .btn-format {
+            background-color: #ffffff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .btn-format:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Responsif untuk HP di bagian header-actions */
+        @media (max-width: 600px) {
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
 
         /* Tabel Matriks */
         .table-container { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -161,8 +208,15 @@
             <p>Indikator Laporan</p>
         </div>
 
-        <div class="user-info" id="userInfo">
-            <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
+        <!-- BUNGKUSAN BARU: Posisi Kiri untuk User Info, Kanan untuk Tombol Format -->
+        <div class="header-actions">
+            <div class="user-info" id="userInfo">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
+            </div>
+            
+            <a href="https://drive.google.com/drive/u/3/folders/1JGt6a6A_i96qdtxwpxaiAhWtby38fNDy" target="_blank" class="btn-format">
+                <i class="fa-solid fa-folder-open"></i> Contoh Format Laporan
+            </a>
         </div>
 
         <div class="table-container">
