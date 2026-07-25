@@ -157,7 +157,7 @@
     <div class="container">
         
         <div class="page-header">
-            <h1>Laporan Jejaring/h1>
+            <h1>Laporan Jejaring</h1>
             <p>Indikator Laporan</p>
         </div>
 
@@ -195,39 +195,39 @@
         // =========================================================================
         const daftarIndikator = [
             {
-                id: "K1.user1",
+                id: "1.",
                 kategori: "Laporan Bulanan Ibu Hamil",
-                nama: "Laporan Bulanan Ibu Hamil"
+                nama: "Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Ibu Hamil"
             },
             {
-                id: "K2.user1",
+                id: "2",
                 kategori: "⁠Laporan Bulanan Ibu Bersalin",
-                nama: "⁠Laporan Bulanan Ibu Bersalin"
+                nama: "⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Ibu Bersalin"
             },
             {
-                id: "K3.user1",
+                id: "3",
                 kategori: "⁠Laporan Bulanan Imunisasi",
-                nama: "⁠Laporan Bulanan Imunisasi"
+                nama: "⁠⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Imunisasi"
             },
             {
-                id: "K4.user1",
+                id: "4",
                 kategori: "⁠Laporan Bulanan Pelayanan Penyakit Tidak Menular",
-                nama: "⁠Laporan Bulanan Pelayanan Penyakit Tidak Menular"
+                nama: "⁠⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Pelayanan Penyakit Tidak Menular"
             },
             {
-                id: "K5.user1",
+                id: "5",
                 kategori: "⁠⁠Laporan Triwulanan BNBA Kohort Hipertensi",
-                nama: "⁠⁠Laporan Triwulanan BNBA Kohort Hipertensi"
+                nama: "Format nama file harus : Nama Faskes_TW Laporan_Laporan Triwulanan BNBA Kohort Hipertensi"
             },
             {
-                id: "K6.user1",
+                id: "6",
                 kategori: "⁠⁠⁠⁠Laporan Triwulanan BNBA Kohort DM",
-                nama: "⁠⁠Laporan Triwulanan BNBA Kohort DM"
+                nama: "Format nama file harus : Faskes_TW Laporan_Laporan Triwulanan BNBA Kohort DM"
             },
             {
-                id: "K7.user1",
+                id: "7",
                 kategori: "⁠⁠⁠⁠Laporan Cek Kesehatan Gratis",
-                nama: "⁠⁠Laporan CKG"
+                nama: "Format nama file harus : Faskes_Bulan Laporan_Laporan Cek Kesehatan Gratis"
             },
         ];
 
@@ -384,6 +384,10 @@
                 // Kirim ke Google Apps Script
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
+                    // TAMBAHKAN HEADER INI UNTUK MENGHINDARI BLOKIR CORS:
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
                     body: JSON.stringify(payload)
                 });
                 
