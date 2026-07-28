@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriks Laporan - UPTD Puskesmas Padasuka</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --border: #e2e8f0;
+            --row-bg: #d1fae5; /* Hijau muda seperti di gambar */
+            --btn-blue: #06b6d4; /* Biru cerah tombol dokumen */
+            --btn-blue-hover: #0891b2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .admin-navbar {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand { font-weight: 700; font-size: 18px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .btn-logout { background-color: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        
+        /* Container & Header */
+        .container { padding: 30px; max-width: 1400px; margin: 0 auto; }
+        .page-header { margin-bottom: 20px; }
+        .page-header h1 { font-size: 24px; color: #1e293b; margin-bottom: 5px; }
+        .page-header p { font-size: 14px; color: #64748b; text-transform: uppercase; }
+
+        /* --- BUNGKUSAN BARU UNTUK INFO USER & TOMBOL FORMAT --- */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* User Info Box */
+        .user-info { 
+            background: #fff; 
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+            display: inline-block; 
+            font-weight: 600; 
+            color: var(--primary-dark); 
+        }
+
+        /* Tombol Format Laporan */
+        .btn-format {
+            background-color: #ffffff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .btn-format:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Responsif untuk HP di bagian header-actions */
+        @media (max-width: 600px) {
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        /* Tabel Matriks */
+        .table-container { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        
+        th { 
+            background: #f8fafc; 
+            padding: 15px; 
+            text-align: left; 
+            font-size: 12px; 
+            color: #64748b; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td { 
+            padding: 20px 15px; 
+            border-bottom: 1px solid #bbf7d0; 
+            background-color: var(--row-bg); /* Warna hijau row */
+            vertical-align: top;
+        }
+
+        .col-no { width: 80px; font-weight: 600; color: #475569; }
+        .col-nama { width: 45%; }
+        
+        .badge-kategori { 
+            display: inline-block; 
+            background: #a7f3d0; 
+            color: #065f46; 
+            font-size: 10px; 
+            font-weight: 700; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            margin-bottom: 8px; 
+            text-transform: uppercase;
+        }
+
+        .judul-indikator { font-size: 14px; color: #1e293b; font-weight: 500; line-height: 1.5; }
+
+        /* Status & Tanggal */
+        .status-container { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+        
+        .badge-status { 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+        }
+        .status-belum { background-color: #cbd5e1; color: #475569; }
+        .status-sudah { background-color: #34d399; color: #ffffff; }
+        
+        .tgl-upload { font-size: 11px; color: #065f46; font-weight: 500; }
+
+        /* Tombol Action */
+        .btn-upload { 
+            background-color: var(--btn-blue); 
+            color: white; 
+            border: none; 
+            padding: 10px 16px; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-upload:hover { background-color: var(--btn-blue-hover); }
+        .btn-upload:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        
+        .btn-lihat {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-top: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="admin-navbar">
+        <div class="brand">
+            <i class="fa-solid fa-house-medical"></i> UPTD Puskesmas Padasuka
+        </div>
+        <button id="btnLogout" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </button>
+    </nav>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <h1>Laporan Jejaring</h1>
+            <p>Indikator Laporan</p>
+        </div>
+
+        <!-- BUNGKUSAN BARU: Posisi Kiri untuk User Info, Kanan untuk Tombol Format -->
+        <div class="header-actions">
+            <div class="user-info" id="userInfo">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat profil...
+            </div>
+            
+            <a href="https://drive.google.com/drive/u/3/folders/1JGt6a6A_i96qdtxwpxaiAhWtby38fNDy" target="_blank" class="btn-format">
+                <i class="fa-solid fa-folder-open"></i> Contoh Format Laporan
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-no">NO</th>
+                        <th class="col-nama">NAMA INDIKATOR</th>
+                        <th>DOKUMEN PENDUKUNG - STATUS</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="4" style="text-align: center; padding: 30px;">Memuat matriks laporan...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Hidden File Input Global -->
+    <input type="file" id="globalFileInput" style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, set, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // =========================================================================
+        // 1. DATA DAFTAR LAPORAN YANG HARUS DIUPLOAD (BISA DITAMBAH BEBAS)
+        // =========================================================================
+        const daftarIndikator = [
+            {
+                id: "1.",
+                kategori: "Laporan Bulanan Ibu Hamil",
+                nama: "Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Ibu Hamil"
+            },
+            {
+                id: "2",
+                kategori: "⁠Laporan Bulanan Ibu Bersalin",
+                nama: "⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Ibu Bersalin"
+            },
+            {
+                id: "3",
+                kategori: "⁠Laporan Bulanan Imunisasi",
+                nama: "⁠⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Imunisasi"
+            },
+            {
+                id: "4",
+                kategori: "⁠Laporan Bulanan Pelayanan Penyakit Tidak Menular",
+                nama: "⁠⁠Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Bulanan Pelayanan Penyakit Tidak Menular"
+            },
+            {
+                id: "5",
+                kategori: "⁠⁠Laporan Triwulanan BNBA Kohort Hipertensi",
+                nama: "Format nama file harus : Nama Faskes_TW Laporan_Laporan Triwulanan BNBA Kohort Hipertensi"
+            },
+            {
+                id: "6",
+                kategori: "⁠⁠⁠⁠Laporan Triwulanan BNBA Kohort DM",
+                nama: "Format nama file harus : Nama Faskes_TW Laporan_Laporan Triwulanan BNBA Kohort DM"
+            },
+            {
+                id: "7",
+                kategori: "⁠⁠⁠⁠Laporan Cek Kesehatan Gratis",
+                nama: "Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Cek Kesehatan Gratis"
+            },
+            {
+                id: "8",
+                kategori: "⁠⁠⁠⁠Laporan Triple Eleminasi",
+                nama: "Format nama file harus : Nama Faskes_Bulan Laporan_Laporan Triple Eleminasi"
+            },
+            {
+                id: "9",
+                kategori: "⁠⁠⁠⁠Laporan Kawasan Tanpa Rokok",
+                nama: "Format nama file harus : Nama Faskes_Triwulan Laporan_Laporan Kawasan Tanpa Rokok"
+            },
+            {
+                id: "10",
+                kategori: "⁠⁠⁠⁠Laporan ISPA",
+                nama: "Format nama file harus : Nama Faskes_Bulan Laporan_Laporan ISPA"
+            },
+        ];
+
+        // =========================================================================
+        // 2. KONFIGURASI API & FIREBASE
+        // =========================================================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOQ6vaI2EzbXZYmp9vPBNABHmF3FwQ1IcU-b7cW-YzA-o8IZK1VnwYB3An4OxtfmJ-/exec";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVldfmqyfy2y4c695qyjPagVbir0LnoZw",
+            authDomain: "assetpdsk.firebaseapp.com",
+            databaseURL: "https://assetpdsk-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "assetpdsk",
+            storageBucket: "assetpdsk.firebasestorage.app",
+            messagingSenderId: "808070903178",
+            appId: "1:808070903178:web:93b279880c01372f71c473"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUserData = null;
+        let currentUserUid = null;
+        let indikatorAktifUntukUpload = null; // Menyimpan ID indikator yang sedang diklik upload
+
+        // =========================================================================
+        // 3. OTENTIKASI & RENDER TABEL
+        // =========================================================================
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserUid = user.uid;
+                
+                // Ambil Nama Klinik
+                get(child(ref(db), `users/${user.uid}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        currentUserData = snapshot.val();
+                        document.getElementById('userInfo').innerHTML = `<i class="fa-solid fa-hospital"></i> ${currentUserData.nama} (${currentUserData.role})`;
+                    }
+                });
+
+                // Render Tabel & Dengarkan Perubahan Upload
+                renderTabelMatriks(currentUserUid);
+
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        function renderTabelMatriks(uid) {
+            const tableBody = document.getElementById('tableBody');
+            
+            // Memantau tabel riwayat_upload khusus untuk user ini secara realtime
+            const uploadRef = ref(db, `matriks_upload/${uid}`);
+            
+            onValue(uploadRef, (snapshot) => {
+                const dataUpload = snapshot.exists() ? snapshot.val() : {};
+                tableBody.innerHTML = ''; // Bersihkan tabel
+
+                daftarIndikator.forEach((item) => {
+                    // Cek apakah item ini sudah pernah diupload
+                    const statusData = dataUpload[item.id]; 
+                    const isUploaded = !!statusData;
+
+                    // Format Tanggal jika ada
+                    let tanggalTeks = "";
+                    if (isUploaded && statusData.uploadedAt) {
+                        const d = new Date(statusData.uploadedAt);
+                        tanggalTeks = `<div class="tgl-upload"><i class="fa-regular fa-clock"></i> ${d.toLocaleDateString('id-ID')} ${d.getHours()}:${d.getMinutes()}</div>`;
+                    }
+
+                    // Tentukan Badge Status
+                    const badgeClass = isUploaded ? 'status-sudah' : 'status-belum';
+                    const badgeText = isUploaded ? 'DISETUJUI / ADA' : 'BELUM ADA';
+
+                    // Tentukan Tombol (Update atau Upload Baru)
+                    const btnUploadText = isUploaded ? '<i class="fa-solid fa-file-arrow-up"></i> Update Dokumen' : '<i class="fa-solid fa-file-arrow-up"></i> Upload Dokumen';
+                    
+                    // Tombol Lihat Dokumen (Hanya muncul jika sudah upload)
+                    const btnLihat = isUploaded ? `<br><a href="${statusData.fileUrl}" target="_blank" class="btn-lihat"><i class="fa-solid fa-eye"></i> Lihat File</a>` : '';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="col-no">${item.id}</td>
+                        <td class="col-nama">
+                            <span class="badge-kategori">${item.kategori}</span>
+                            <div class="judul-indikator">${item.nama}</div>
+                        </td>
+                        <td>
+                            <div class="status-container">
+                                <span class="badge-status ${badgeClass}">${badgeText}</span>
+                                ${tanggalTeks}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-upload" data-id="${item.id}" data-nama="${item.nama}" id="btn-${item.id}">
+                                ${btnUploadText}
+                            </button>
+                            ${btnLihat}
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                // Pasang Event Listener untuk semua tombol Upload
+                document.querySelectorAll('.btn-upload').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        indikatorAktifUntukUpload = {
+                            id: this.dataset.id,
+                            nama: this.dataset.nama
+                        };
+                        // Pemicu klik pada input file tersembunyi
+                        document.getElementById('globalFileInput').click();
+                    });
+                });
+            });
+        }
+
+        // =========================================================================
+        // 4. PROSES UPLOAD FILE KE GOOGLE DRIVE & FIREBASE
+        // =========================================================================
+        const fileInput = document.getElementById('globalFileInput');
+        
+        fileInput.addEventListener('change', async function() {
+            if (!this.files || this.files.length === 0 || !indikatorAktifUntukUpload) return;
+            
+            const file = this.files[0];
+            const indikatorId = indikatorAktifUntukUpload.id;
+            const btnTerkait = document.getElementById(`btn-${indikatorId}`);
+
+            // Cek Ukuran
+            if(file.size > 5 * 1024 * 1024) {
+                Swal.fire('File Terlalu Besar', 'Maksimal ukuran file adalah 5MB.', 'warning');
+                this.value = ''; // Reset input
+                return;
+            }
+
+            // UI Loading
+            const originalBtnText = btnTerkait.innerHTML;
+            btnTerkait.disabled = true;
+            btnTerkait.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mengunggah...';
+
+            try {
+                const base64File = await convertBase64(file);
+                
+                // Payload untuk Google Apps Script
+                const payload = {
+                    fileName: `[${indikatorId}] ${file.name}`, // Tambahkan kode ID di nama file
+                    fileType: file.type,
+                    fileBase64: base64File.split(',')[1],
+                    userRole: currentUserData.role
+                };
+
+                // Kirim ke Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    // TAMBAHKAN HEADER INI UNTUK MENGHINDARI BLOKIR CORS:
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    
+                    // Simpan data ke Realtime Database berdasarkan ID Indikator
+                    // Format path: matriks_upload / UID_KLINIK / K1.1.1.1
+                    await set(ref(db, `matriks_upload/${currentUserUid}/${indikatorId}`), {
+                        indikatorNama: indikatorAktifUntukUpload.nama,
+                        fileName: result.fileName,
+                        fileUrl: result.fileUrl,
+                        uploadedAt: new Date().toISOString()
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Upload Berhasil!',
+                        text: `Dokumen untuk indikator ${indikatorId} telah tersimpan.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                } else {
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                Swal.fire('Gagal Upload', error.message || 'Terjadi kesalahan jaringan.', 'error');
+                btnTerkait.disabled = false;
+                btnTerkait.innerHTML = originalBtnText;
+            } finally {
+                this.value = ''; // Reset file input agar bisa milih file yang sama lagi jika perlu
+            }
+        });
+
+        function convertBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // =========================================================================
+        // 5. LOGOUT
+        // =========================================================================
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = 'login.html'; });
+        });
+    </script>
+</body>
+</html>
