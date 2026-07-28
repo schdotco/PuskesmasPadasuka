@@ -116,6 +116,11 @@ switch(userRole) {
         // Arahkan ke Dashboard untuk User 5
         window.location.href = 'dashboard-user5.html';
         break;
+
+    case 'user6':
+        // Arahkan ke Dashboard untuk User 6
+        window.location.href = 'dashboard-user6.html';
+        break;
         
     default:
         // Jika role tidak dikenali atau kosong
